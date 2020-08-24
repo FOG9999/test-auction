@@ -50,12 +50,9 @@ class Item extends Component {
         else return "No one auction yet";
     }
 
-    componentDidMount(){
-        setInterval(() => {
-            this.props.dispatchLoading();
-            this.props.dispatchAutoUpdate(this.props.match.params.id);
-        },60000);
-    }
+    // componentDidMount(){
+        
+    // }
 
     displayTableOfAuctioner = () => {
         if (this.props.auctionersForItem.length > 0) {
@@ -198,6 +195,10 @@ class Item extends Component {
                         timeLeft: converter.convertToTimer(json.endDate)
                     })
                 }, 1000)
+                setInterval(() => {
+                    this.props.dispatchLoading();
+                    this.props.dispatchAutoUpdate(this.props.match.params.id);
+                },60000);
                 this.props.dispatchLoaded();
             })
     }
