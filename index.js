@@ -2,7 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const app = express();
-const port = 4000;
+const port = process.env.PORT || 4000;
 const mongoose = require('mongoose');
 const config = require('./config/database');
 const userctl = require('./controllers/userctl');
@@ -14,6 +14,7 @@ const orderctl = require('./controllers/orderctl');
 const item = require('./models/item');
 // const uploadDrive = require('./uploadDrive'); => only use when upload from local machine
 //const upload = require('express-fileupload');
+const path = require('path');
 
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -27,6 +28,15 @@ mongoose.connect(config.uri, {
 }, () => {
     console.log('Database connected');
 })
+
+if(process.env.NODE_ENV === 'production'){
+    app.use(express.static('client/build'));
+
+    app.get('*',(req,res) => {
+        res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
+    })
+}
+
 app.listen(port, () => {
     console.log(`Server is listening on port ${port}`);
 })
