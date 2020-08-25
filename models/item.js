@@ -18,9 +18,8 @@ var ItemSchema = mongoose.Schema({
     currentPrice: {
         type: Number
     },
-    finalPrice: { // this field is redundant
-        type: Number,
-        default: 0
+    originalPrice: { 
+        type: Number
     },
     beginDate: {
         type: Date
@@ -35,6 +34,15 @@ var ItemSchema = mongoose.Schema({
     },
     isSold: {
         type: Boolean
+    },
+    sellerPhone: {
+        type: String
+    },
+    sellerAddress: {
+        type: String
+    },
+    auctionFeeType: { // 0: $5, 1: 5% of final price, 2: 10% of final price
+        type: Number
     }
 })
 

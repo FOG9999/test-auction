@@ -26,13 +26,14 @@ class Checkout extends Component {
         .then(json => {
             console.log(json);
             this.setState({
-                listOfItems: [...json]
+                listOfItems: [...json],
+                total: json.reduce((init, current) => (init + current.currentPrice), 0)
             })
         })
     }
     
     onConfirmOrder = () => {
-        const {inputAddress,inputEmail,inputFirstName,inputLastName,inputPhone,listOfItems} = this.state;
+        const {inputAddress,inputEmail,inputFirstName,inputLastName,inputPhone,listOfItems, total} = this.state;
         if(inputAddress && inputFirstName && inputEmail && inputLastName && inputPhone){
             this.props.dispatchLoading();
             fetch('/createOrder',{
@@ -48,7 +49,8 @@ class Checkout extends Component {
                     address: inputAddress,
                     phoneNum: inputPhone,
                     userBoughtID: localStorage.getItem('userID'),
-                    listOfItems: listOfItems
+                    listOfItems: listOfItems,
+                    total: total
                 })
             })
             .then(res => res.json())
@@ -72,7 +74,8 @@ class Checkout extends Component {
         listOfItems: [],
         hasEmptyField: true,
         redirectToSummary: false,
-        orderID: ''
+        orderID: '',
+        total: 0
     }
 
     onChangeFirstName = (e) => {

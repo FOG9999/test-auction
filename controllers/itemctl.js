@@ -9,8 +9,12 @@ module.exports = {
             name: information.name,
             detail: [...information.descriptionList],
             currentPrice: information.startingPrice,
+            originalPrice: information.startingPrice,
+            auctionFeeType: information.auctionFeeType,
             images: [...imgLinks],
             beginDate: Date(),
+            sellerPhone: information.sellerPhone,
+            sellerAddress: information.sellerAddress,
             endDate: information.endDate,
             category: Math.floor(Math.random() * 70)
         })
@@ -89,6 +93,26 @@ module.exports = {
             done(null, data.filter(value => {
                 return ((new Date(value.endDate)).getTime() < (new Date()).getTime())
             }));
+        })
+    },
+    addFields: (done) => {
+        Item.updateMany({},{
+            originalPrice: Math.floor(Math.random()*100),
+            sellerPhone: '0123456789',
+            sellerAddress: 'Street ABC, City XYZ',
+            auctionFeeType: 0
+        },{new: true},(err,data) => {
+            if(err) console.error(err);
+            done(null,data);
+        })
+    },
+    fixWrongInfo: (done) => {
+        Item.updateMany({
+            userBoughtID: {$ne: null},
+            endDate: {$lt: new Date()}
+        },{isSold: true},(err,data) => {
+            if(err) console.error(err);
+            done(null,data);
         })
     }
 }

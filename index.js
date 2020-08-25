@@ -273,7 +273,10 @@ app.post('/userUploadItem',(req,res,next) => {
         startingPrice: req.body.startingPrice,
         endDate: req.body.endDate,
         imageName: req.body.imageName,
-        descriptionList: req.body.descriptionList
+        descriptionList: req.body.descriptionList,
+        sellerPhone: req.body.sellerPhone,
+        sellerAddress: req.body.sellerAddress,
+        auctionFeeType: req.body.auctionFeeType
     },(err,data) => {
         if(err) next(err);
         res.send(data);
@@ -296,7 +299,7 @@ app.get('/category',(req,res,next) => {
 })
 
 app.post('/createOrder',(req,res,next) => {
-    const {userBoughtID,firstname, lastname,address,phoneNum,email,listOfItems} = req.body;
+    const {userBoughtID,firstname, lastname,address,phoneNum,email,listOfItems,total} = req.body;
     orderctl.create({
         userBoughtID: userBoughtID,
         firstname: firstname,
@@ -304,7 +307,8 @@ app.post('/createOrder',(req,res,next) => {
         address: address,
         phoneNum: phoneNum,
         email: email,
-        listOfItems: [...listOfItems]
+        listOfItems: [...listOfItems],
+        total: total
     },(err,data) => {
         if(err) next(err);
         res.send(data);
@@ -330,6 +334,22 @@ app.post('/checkPendingOrder',(req,res,next) => {
         else res.send({
             havePendingOrder: false
         })
+    })
+})
+
+// adding some fields for item
+app.post('/addFields',(req,res,next) => {
+    itemctl.addFields((err,data) => {
+        if(err) next(err);
+        res.send(data);
+    })
+})
+
+// fix some sold items whose isSold === false
+app.post('/fixWrongInfo',(req,res,next) => {
+    itemctl.fixWrongInfo((err,data) => {
+        if(err) next(err);
+        res.send(data);
     })
 })
 

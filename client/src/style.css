@@ -671,6 +671,12 @@ h5 {
     color: #1ab7ea;
 }
 
+.total-cost {
+    padding: 10px;
+    background-color: silver;
+    text-align: center;
+}
+
 .current-order {
     width: 700px;
 }
@@ -797,6 +803,15 @@ h5 {
     margin-bottom: 15px;
     padding-right: 20px;
     background-color: white;
+}
+
+#sellingitem-original-price {
+    margin-right: 10px;
+    color: green;
+}
+
+#open-order-detail:hover {
+    text-decoration: underline;
 }
 
 .sellingitem-info {

@@ -12,7 +12,7 @@ var validatePassword = (password) => {
 
 var validatePhoneNum = (phoneNum) => {
     var regex = /^[01,02,03]\d{8,9}/g;
-    return regex.test(phoneNum) && phoneNum.length >= 10 && phoneNum.length <= 11
+    return regex.test(phoneNum) && phoneNum.length >= 10 && phoneNum.length <= 11 && !isNaN(parseInt(phoneNum))
 }
 
-console.log(validatePhoneNum('0156373843s'));
+console.log(validatePhoneNum('0556375843'));

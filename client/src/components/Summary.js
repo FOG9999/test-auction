@@ -59,12 +59,16 @@ class Summary extends Component {
                                         </div>
                                         <div className="item-quantity-cart">
                                             Quantity: 1
-                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         })
                     }
+                    <div className="total-cost">
+                        Delivery cost: $1<br/>
+                        <b>Total: {this.state.order.total}</b>
+                    </div>
                 </div>
             </div>
         }

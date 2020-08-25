@@ -11,7 +11,8 @@ module.exports = {
             phoneNum: inputInfo.phoneNum,
             email: inputInfo.email,
             listOfItems: [...inputInfo.listOfItems],
-            createdAt: new Date()
+            createdAt: new Date(),
+            total: inputInfo.total
         })
         Item.updateMany({_id: {$in: inputInfo.listOfItems}},{isSold: true},(err2,data2) => {
             if(err2) console.error(err);

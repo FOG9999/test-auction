@@ -45,7 +45,9 @@ class SellingItem extends Component {
         fileLeft: '',
         fileRight: '',
         previewSrc: '',
-        descriptionList: []
+        descriptionList: [],
+        uploadSellerPhone: '',
+        uploadSellerAddress: ''
     }
 
     componentDidMount() {
@@ -116,8 +118,10 @@ class SellingItem extends Component {
                             <img src={item.images[0] || item.images} alt="" id="sellingitem-image" />
                             <div className="sellingitem-info">
                                 <span id="sellingitem-name">{item.name}</span><br />
-                                <span id="sellingitem-currBid">Current Bid:        {item.currentPrice}</span><br />
-                                <span id="sellingitem-currWinner">Current Winner:  {(item.userBoughtID) ? `${item.userBoughtID.name}/${item.userBoughtID.email}` : 'none'}</span><br />
+                                <span id="sellingitem-original-price">Original Price: {item.originalPrice}</span>
+                                <span id="sellingitem-currBid">Current Bid:        {item.currentPrice}&nbsp;{((new Date(item.endDate)).getTime() < (new Date()).getTime()) ? `(After auction fee: ${this.showAfterAuctionFee(item)})`:null}</span><br />
+                                <span id="sellingitem-currWinner">Current Winner:  {(item.userBoughtID) ? `${item.userBoughtID.name}/${item.userBoughtID.email}` : 'none'}</span>                                
+                                <br />
                                 <span id="begin-end">
                                     Begin Date: {item.beginDate.substring(0, 10)}&nbsp;&nbsp;&nbsp;End Date: {item.endDate.substring(0, 10)}
                                 </span><br />
@@ -165,6 +169,18 @@ class SellingItem extends Component {
         })
     }
 
+    onChangeSellerPhone = (e) => {
+        this.setState({
+            uploadSellerPhone: e.target.value
+        })
+    }
+
+    onChangeSellerAddress = (e) => {
+        this.setState({
+            uploadSellerAddress: e.target.value
+        })
+    }
+
     onUpdateDescriptionList = (newList) => {
         this.setState({
             descriptionList: [...newList]
@@ -172,7 +188,7 @@ class SellingItem extends Component {
     }
 
     onSubmitAddItem = async () => {
-        const { uploadItemName, uploadCurrentPrice, endDate, fileFront, fileBack, fileLeft, fileRight, descriptionList } = this.state;
+        const { uploadItemName, uploadCurrentPrice, endDate, fileFront, fileBack, fileLeft, fileRight, descriptionList, uploadSellerAddress, uploadSellerPhone } = this.state;
         if (!!uploadCurrentPrice && !!uploadItemName && endDate.getTime() > (new Date()).getTime() && (fileFront && fileBack && fileLeft && fileRight)) {
             this.setState({
                 showModalAddItem: false
@@ -196,7 +212,10 @@ class SellingItem extends Component {
                         endDate: endDate,
                         startingPrice: uploadCurrentPrice,
                         imageName: [fileFront.name, fileBack.name, fileLeft.name, fileRight.name],
-                        descriptionList: descriptionList
+                        descriptionList: descriptionList,
+                        sellerPhone: uploadSellerPhone,
+                        sellerAddress: uploadSellerAddress,
+                        auctionFeeType: (uploadCurrentPrice >= 100)?((uploadCurrentPrice < 1000)?1:2):0
                     })
                 }),
                 fetch('https://upload-server.glitch.me/upload', {
@@ -259,6 +278,29 @@ class SellingItem extends Component {
         })
     }
 
+    showAuctionFee = () => {
+        let uploadPrice = this.state.uploadCurrentPrice;
+        if(uploadPrice < 100){
+            return '$ 5';
+        }
+        else if(uploadPrice < 1000){
+            return '5% of item\'s final price';
+        }
+        else return '10% of item\'s final price';
+    }
+
+    showAfterAuctionFee = (item) => {
+        if(item && item.isSold){
+            switch(item.auctionFeeType){
+                case 0: return item.currentPrice - 5;
+                case 1: return item.currentPrice - item.currentPrice/20
+                case 2: return item.currentPrice - item.currentPrice/10
+                default: return 0;
+            }
+        }
+        else return null;
+    }
+
     render() {
         return (
             <div className="sellingitem-wrapper">
@@ -283,6 +325,7 @@ class SellingItem extends Component {
                         <input className="form-control" value={this.state.uploadItemName} onChange={this.onChangeItemName} type='text' />
                         <label>Item starting price:</label><br />
                         <input className="form-control" value={this.state.uploadCurrentPrice} onChange={this.onChangeItemStartingPrice} type='number' />
+                        <label style={{color: "red"}}>Auction fee: {this.showAuctionFee()}</label><br/>
                         <label>Item image (Front):</label><br />
                         <input type="file" onChange={this.onchangeUploadFront} /><br />
                         <label>Item image (Back):</label><br />
@@ -290,10 +333,17 @@ class SellingItem extends Component {
                         <label>Item image (Left):</label><br />
                         <input type="file" onChange={this.onchangeUploadLeft} /><br />
                         <label>Item image (Right):</label><br />
-                        <input type="file" onChange={this.onchangeUploadRight} /><br />
+                        <input type="file" onChange={this.onchangeUploadRight} /><br />                        
                         <Description descriptionList={this.state.descriptionList} onUpdateList={this.onUpdateDescriptionList}/><br/>
                         <label>Choose item's end date:</label>&nbsp;                        
                         <DatePicker onChange={this.onChangeEndDate} />
+                        <p style={{color: "red"}}>
+                            These below infomation is served for delivery process.
+                        </p>
+                        <label>Contact phone number:</label><br />
+                        <input className="form-control" value={this.state.uploadSellerPhone} onChange={this.onChangeSellerPhone} type='text' />
+                        <label>Delivery address:</label><br />
+                        <input className="form-control" value={this.state.uploadSellerAddress} onChange={this.onChangeSellerAddress} type='text' />
                     </Modal.Body>
                     <Modal.Footer style={{ height: 'fit-content' }}>
                         <button className="btn btn-primary" onClick={this.onSubmitAddItem}>Add Item</button>
