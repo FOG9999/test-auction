@@ -4,9 +4,15 @@ var validateEmail = (email) => {
 }
 
 var validatePassword = (password) => {
-    var regex1 = /[(a-z)|/d]{7,}/g,
-    regex2 = /^.*[!,@,#,$,%,^,*](.*)$/g;
-    return regex1.test(password)
+    var regex1 = /^.*[A-Z](.*)$/g,
+    regex2 = /^.*[!,@,#,$,%,^,*](.*)$/g,
+    regex3 = /^.*\d(.*)$/g;
+    return (regex3.test(password) && regex2.test(password) && regex1.test(password) && password.length >= 8)
 }
 
-console.log(validatePassword('fog12345'));
+var validatePhoneNum = (phoneNum) => {
+    var regex = /^[01,02,03]\d{8,9}/g;
+    return regex.test(phoneNum) && phoneNum.length >= 10 && phoneNum.length <= 11
+}
+
+console.log(validatePhoneNum('0156373843s'));
